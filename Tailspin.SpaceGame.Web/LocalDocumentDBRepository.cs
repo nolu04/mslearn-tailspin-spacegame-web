@@ -19,6 +19,12 @@ namespace TailSpin.SpaceGame.Web
             _items = JsonSerializer.Deserialize<List<T>>(File.ReadAllText(fileName));
         }
 
+        public LocalDocumentDBRepository(Stream stream)
+        {
+            // Serialize the items from the provided JSON document.
+            _items = JsonSerializer.Deserialize<List<T>>(new StreamReader(stream).ReadToEnd());
+        }
+
         /// <summary>
         /// Retrieves the item from the store with the given identifier.
         /// </summary>
@@ -54,7 +60,7 @@ namespace TailSpin.SpaceGame.Web
                 .Where(queryPredicate) // filter
                 .OrderByDescending(orderDescendingPredicate) // sort
                 .Skip(page * pageSize) // find page
-                .Take(pageSize); // take items
+                .Take(pageSize - 1); // take items
 
             return Task<IEnumerable<T>>.FromResult(result);
         }
